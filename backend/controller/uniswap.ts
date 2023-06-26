@@ -59,9 +59,78 @@ const poolQuery = `
     }
 `
 
+const uniswapAnalysis = `
+  query MyQuery {
+    uniswapDayDatas(first: 30) {
+      date
+      feesUSD
+      tvlUSD
+      txCount
+      volumeETH
+      volumeUSD
+      volumeUSDUntracked
+      id
+    }
+    transactions(first: 4) {
+      gasPrice
+      gasUsed
+      swaps {
+        token0 {
+          totalSupply
+          id
+          name
+        }
+        token1 {
+          name
+          totalSupply
+          id
+        }
+        amountUSD
+        transaction {
+          blockNumber
+          id
+        }
+        id
+      }
+      id
+    }
+    tokenDayDatas {
+      feesUSD
+      date
+      high
+      low
+      open
+      priceUSD
+      volumeUSD
+      totalValueLockedUSD
+      token {
+        name
+        totalSupply
+        totalValueLockedUSD
+        volumeUSD
+        id
+      }
+      id
+    }
+    poolDayDatas {
+      date
+      feesUSD
+      high
+      id
+      liquidity
+      low
+      open
+      token0Price
+      token1Price
+      volumeToken0
+      volumeToken1
+    }
+  }
+`
+
 const uniswapV3 = "https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v3"
 
-exports.getUniswapPositionData = async (req: Request, res: Response)=> {
+exports.getUniswapPositionData = async (req: Request, res: Response) => {
   try {
     const response = await axios.post(uniswapV3, {
       query: positionQuery,
@@ -73,15 +142,14 @@ exports.getUniswapPositionData = async (req: Request, res: Response)=> {
   }
 };
 
-exports.getUniswapPoolData = async (req: Request, res: Response)=> {
-    try {
-      const response = await axios.post(uniswapV3, {
-        query: poolQuery,
-      });
-  
-      res.json(response.data);
-    } catch (error) {
-      res.status(500).json({ error: 'Something went wrong.' });
-    }
-  };
-  
+exports.getUniswapPoolData = async (req: Request, res: Response) => {
+  try {
+    const response = await axios.post(uniswapV3, {
+      query: poolQuery,
+    });
+
+    res.json(response.data);
+  } catch (error) {
+    res.status(500).json({ error: 'Something went wrong.' });
+  }
+};
