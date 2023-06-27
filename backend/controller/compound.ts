@@ -1,5 +1,5 @@
-import axios from "axios";
 import { Request, Response } from 'express';
+import { sendGraphqlRequest } from "../utils/graphql.request";
 
 const marketQuery = `
     query {
@@ -30,12 +30,9 @@ const marketQuery = `
 const compound = "https://api.thegraph.com/subgraphs/name/graphprotocol/compound-v2"
 
 exports.getCompoundData = async (req: Request, res: Response)=> {
-  try {
-    const response = await axios.post(compound, {
-      query: marketQuery,
-    });
-    res.json(response.data);
-  } catch (error) {
+  const response = await sendGraphqlRequest(compound,marketQuery)
+  if(response == ""){
     res.status(500).json({ error: 'Something went wrong.' });
   }
+  res.json(response);
 };

@@ -1,5 +1,6 @@
 const axios = require('axios');
 import { Request, Response } from 'express';
+import { sendGraphqlRequest } from '../utils/graphql.request';
 
 const positionQuery = `
   query HomeData {
@@ -131,25 +132,28 @@ const uniswapAnalysis = `
 const uniswapV3 = "https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v3"
 
 exports.getUniswapPositionData = async (req: Request, res: Response) => {
-  try {
-    const response = await axios.post(uniswapV3, {
-      query: positionQuery,
-    });
-
-    res.json(response.data);
-  } catch (error) {
+  const response = await sendGraphqlRequest(uniswapV3,positionQuery)
+  if(response == ""){
     res.status(500).json({ error: 'Something went wrong.' });
   }
+  res.json(response);
 };
 
 exports.getUniswapPoolData = async (req: Request, res: Response) => {
-  try {
-    const response = await axios.post(uniswapV3, {
-      query: poolQuery,
-    });
-
-    res.json(response.data);
-  } catch (error) {
+  const response = await sendGraphqlRequest(uniswapV3,poolQuery)
+  if(response == ""){
     res.status(500).json({ error: 'Something went wrong.' });
   }
+  res.json(response);
 };
+
+
+exports.getUniswapAnalysis = async (req:Request, res:Response) => {
+  const response = await sendGraphqlRequest(uniswapV3,uniswapAnalysis)
+  if(response == ""){
+    res.status(500).json({ error: 'Something went wrong.' });
+  }
+  res.json(response);
+}
+
+

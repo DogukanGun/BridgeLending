@@ -1,3 +1,6 @@
+import { sendGraphqlRequest } from "../utils/graphql.request";
+import { Request, Response } from 'express';
+
 const aaveAnalysis = `
     query MyQuery {
         reserves {
@@ -47,3 +50,12 @@ const aaveAnalysis = `
         }
     }
 `
+const aave = "https://api.thegraph.com/subgraphs/name/aave/protocol-multy-raw"
+
+exports.getAaveData = async (req: Request, res: Response) => {
+    const response = await sendGraphqlRequest(aave, aaveAnalysis)
+    if (response == "") {
+        res.status(500).json({ error: 'Something went wrong.' });
+    }
+    res.json(response);
+};
